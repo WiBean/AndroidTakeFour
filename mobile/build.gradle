@@ -1,0 +1,51 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.1"
+
+    defaultConfig {
+        applicationId "com.wibean.android.wibean"
+        minSdkVersion 16
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "REPORT_ANALYTICS", "true"
+            zipAlignEnabled true
+        }
+        debug {
+            buildConfigField "boolean", "REPORT_ANALYTICS", "false"
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    wearApp project(':wear')
+    compile 'com.android.support:appcompat-v7:21.0.0'
+    // for Google Analytics
+    compile 'com.google.android.gms:play-services:6.1.71'
+    // my stuff
+    compile 'com.koushikdutta.ion:ion:1.2.4'
+    compile 'com.squareup.okhttp:okhttp:2.0.+'
+    // for the barcode scanner
+    compile 'com.google.zxing:android-integration:3.+'
+    // for annotations such as @IdRes
+    compile 'com.android.support:support-annotations:+'
+    compile files('libs/smartconfiglib.jar')
+    // For wearable-capable notifications as well as all the other compat stuff
+    compile 'com.android.support:support-v4:21.+'
+    // for HashCodeBuilder
+    compile 'org.apache.commons:commons-lang3:3.3+'
+}
+// for Lambdas in 1.7
+apply plugin: 'retrolambda'

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WiBean</string>
+
+    <string name="action_toggle_heating_on">Heat!</string>
+    <string name="action_toggle_heating_off">Sleep</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_brew">Brew!</string>
+    <string name="action_brewing">Brewing!</string>
+    <string name="action_brewing_description">Generating coffee...\n\nTap outside to cancel</string>
+
+
+    <string name="action_discardProgramChanges">Dischard Changes</string>
+    <string name="action_discardDeleteProgram">Delete Program!</string>
+    <string name="action_saveProgram">Save Changes</string>
+    <string name="action_createProgram">Create!</string>
+    <string name="action_connecting_title">Connecting</string>
+    <string name="action_pleaseWait">Please wait...</string>
+    <string name="action_activatingHeat">Activating Heat...</string>
+    <string name="action_disablingHeat">Hibernating...</string>
+
+
+    <string name="nav_title_takeControl">Settings</string>
+    <string name="nav_title_brewingprogram_list">Brewing Programs</string>
+    <string name="nav_title_wakeAlarm">Automatic Pre-Heat</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="label_control_status_cooling">Cooling</string>
+    <string name="label_control_status_bad">No Connection</string>
+    <string name="label_control_status_brewing">Brewing!</string>
+    <string name="label_control_status_heating">Heat On</string>
+    <string name="label_control_status_connecting">Connecting...</string>
+    <string name="label_program_unit_description">*All times given in units of 100ms</string>
+
+    <string name="hint_example_program_name">Example Program Title</string>
+    <string name="hint_example_program_description">The greatest example program ever.</string>
+    <string name="hint_ip_address">192.168.1.107</string>
+    <string name="hint_goal_temperature">95 °C</string>
+
+    <string name="notify_changesSavedSuccess">Changes saved...</string>
+    <string name="notify_changesSavedFailure">Failed to save changes!</string>
+    <string name="notify_wibeanConnectionSuccess">WiBean connected!</string>
+    <string name="notify_brewingFailure_title">Failed to brew</string>
+
+    <string name="notify_brewingFailure_message_error">Please check that you are connected and the heat
+    is turned on.</string>
+    <string name="notify_brewingFailure_message_busy">The machine is currently brewing another program.
+    Please wait until it is finished and try again.</string>
+    <string name="notify_brewSuccess">Enjoy your coffee!</string>
+    <string name="notify_brewCancelled">Brewing stopped!</string>
+    <string name="notify_alarmUpdate_title">Updating Alarm Settings</string>
+    <string name="notify_goalTemperatureAchieved">Espresso machine is hot!</string>
+    <string name="notify_goalTemperatureAchieved_prefix">Current temperature is\u0020</string>
+    <string name="notify_goalTemperatureAchieved_suffix">°C</string>
+
+
+    <string name="loading_message">Working, please wait...</string>
+
+    <string name="label_goalTemperature">Goal Temp (°C):</string>
+    <string name="label_accessToken">Access Token</string>
+    <string name="label_device_id">Device ID</string>
+    <string name="action_testCredentials">Save Settings</string>
+    <string name="action_testCredentials_toast">Settings saved!</string>
+
+    <string name="filter_title_viewBrewingProgram">WiBean Brewing Program</string>
+    <string name="description_list_item_icon">List item icon</string>
+
+
+    <!-- Strings for the SmartConfig screen -->
+    <string name="label_wifi_ssid">SSID</string>
+    <string name="label_wifi_password">Password</string>
+    <string name="hint_ssid">WifiNetworkName</string>
+    <string name="hint_wifi_password">theWifiPassword</string>
+    <string name="label_smartConfig_start">Connect!</string>
+    <string name="label_smartConfig_stop">Stop!</string>
+    <string name="label_smartconfig_aes_key">AES Key</string>
+    <string name="default_smartConfig_aes_key">sparkdevices2013</string>
+
+    <string name="alert_noConnectionTitle">Cannot Connect</string>
+    <string name="alert_noConnection_wifiNotConnected">Wifi must be turned on and connected to
+    the network you wish to associate your WiBean with.</string>
+    <string name="alert_connectionTimeout">The attempt to find your WiBean timed out, please
+    check your WiFi settings and the minimum requirements (see instructions) for using a WiBean.
+    </string>
+    <string name="alert_connectionSuccess">Success!  Now setup your WiBean credentials on
+    the Settings tab.</string>
+    <string name="alert_connectionFailure">Connection failed!  An unexpected error was encountered
+    during the connection process.  Please try again.</string>
+    <string name="alert_ip_error_message">Could not connect to the WiBean.\n
+            Please check the access credentials.</string>
+    <string name="alert_ip_error_title">Connection Error</string>
+
+
+    <string name="alarm_title">Automatic Pre-Heat</string>
+    <string name="alarm_description">Choose a time at which your WiBean will automatically
+    power on and begin heating.</string>
+    <string name="alarm_timezone_label">Timezone</string>
+    <string name="alarm_timezone_findButton">Determine my timezone</string>
+    <string name="alarm_status_off">Off</string>
+    <string name="heading_control_status_updating">Updating</string>
+    <string name="cancel">Cancel</string>
+    <string name="word_seconds">seconds</string>
+
+
+    <string-array name="simple_timezone_list">
+        <item>-12 GMT-12:00</item>
+        <item>-11 GMT-11:00</item>
+        <item>-10 GMT-10:00</item>
+        <item>-09 GMT-09:00</item>
+        <item>-08 GMT-08:00</item>
+        <item>-07 GMT-07:00</item>
+        <item>-06 GMT-06:00</item>
+        <item>-05 GMT-05:00</item>
+        <item>-04 GMT-04:00</item>
+        <item>-03 GMT-03:00</item>
+        <item>-02 GMT-02:00</item>
+        <item>-01 GMT-01:00</item>
+        <item>+00 GMT+00:00</item>
+        <item>+01 GMT+01:00</item>
+        <item>+02 GMT+02:00</item>
+        <item>+03 GMT+03:00</item>
+        <item>+04 GMT+04:00</item>
+        <item>+05 GMT+05:00</item>
+        <item>+06 GMT+06:00</item>
+        <item>+07 GMT+07:00</item>
+        <item>+08 GMT+08:00</item>
+        <item>+09 GMT+09:00</item>
+        <item>+10 GMT+10:00</item>
+        <item>+11 GMT+11:00</item>
+        <item>+12 GMT+12:00</item>
+    </string-array>
+
+    <string-array name="nav_drawer_items">
+        <item>Brew!</item>
+        <item>Pre-Heat Alarm</item>
+        <item>Settings</item>
+        <item>Connect Wifi</item>
+    </string-array>
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <array name="nav_drawer_icons">
+        <item>@drawable/coffee_cup_icon</item>
+        <item>@drawable/ic_action_alarms</item>
+        <item>@drawable/ic_action_settings</item>
+        <item>@drawable/ic_action_network_wifi</item>
+    </array>
+
+</resources>

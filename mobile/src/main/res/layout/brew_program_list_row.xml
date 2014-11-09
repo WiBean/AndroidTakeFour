@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_brushed_metal_short_stack"
+    android:descendantFocusability="blocksDescendants">
+
+    <ImageView
+        android:id="@+id/iv_brew_program_graphic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:focusable="false"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="5dp"
+        android:paddingTop="10dp"
+        android:src="@drawable/basic_espresso" />
+
+    <TextView
+        android:id="@+id/tv_listRow_brewProgram_title"
+        style="@android:style/TextAppearance.DeviceDefault.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/iv_brew_program_graphic"
+        android:layout_toEndOf="@+id/iv_brew_program_graphic"
+        android:focusable="false"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="Title" />
+
+    <TextView
+        android:id="@+id/tv_listRow_brewProgram_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_listRow_brewProgram_title"
+        android:layout_toEndOf="@+id/iv_brew_program_graphic"
+        android:focusable="false"
+        android:text="...description..." />
+
+    <ImageButton
+        android:id="@+id/ib_editBrewProgram"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_action_settings" />
+
+</RelativeLayout>

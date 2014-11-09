@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="ga_sessionTimeout">300</integer>
+    <!-- Enable automatic Activity measurement -->
+    <bool name="ga_autoActivityTracking">true</bool>
+    <!-- The screen names that will appear in reports -->
+    <screenName name="com.wibean.android.wibean.AlarmFragment">
+        WiBeanAndroidV2 AlarmFragment
+    </screenName>
+    <screenName name="com.wibean.android.wibean.BrewingProgramDetailFragment">
+        WiBeanAndroidV2 BrewingProgramDetailFragment
+    </screenName>
+    <screenName name="com.wibean.android.wibean.SmartConfigFragment">
+        WiBeanAndroidV2 SmartConfigFragment
+    </screenName>
+    <screenName name="com.wibean.android.wibean.TakeControlFragment">
+        WiBeanAndroidV2 TakeControlFragment
+    </screenName>
+    <!--  The following value should be replaced with correct property id. -->
+    <string name="ga_trackingId">UA-42606656-1</string>
+</resources>

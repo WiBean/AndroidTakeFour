@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.wibean.android.wibean.MainActivity">
+    <item
+        android:id="@+id/menu_toggle_heating"
+        android:showAsAction="withText|ifRoom"
+        android:title="@string/action_toggle_heating_on" />
+</menu>
