@@ -1,0 +1,122 @@
+-- Merging decision tree log ---
+manifest
+ADDED from AndroidManifest.xml:2:1
+	package
+		ADDED from AndroidManifest.xml:3:5
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:versionName
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	xmlns:android
+		ADDED from AndroidManifest.xml:2:11
+	android:versionCode
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+application
+ADDED from AndroidManifest.xml:5:5
+MERGED from com.android.support:appcompat-v7:21.0.0:16:5
+MERGED from com.android.support:support-v4:21.0.2:16:5
+MERGED from com.google.android.gms:play-services:6.1.71:16:5
+MERGED from com.android.support:support-v4:21.0.2:16:5
+MERGED from com.android.support:support-v4:21.0.2:16:5
+MERGED from AndroidManifest.xml:3:5
+	android:label
+		ADDED from AndroidManifest.xml:8:9
+	android:allowBackup
+		ADDED from AndroidManifest.xml:6:9
+	android:icon
+		ADDED from AndroidManifest.xml:7:9
+	android:theme
+		ADDED from AndroidManifest.xml:9:9
+activity#com.wibean.android.wibean.BrewingProgramListActivity
+ADDED from AndroidManifest.xml:10:9
+	android:screenOrientation
+		ADDED from AndroidManifest.xml:13:13
+	android:label
+		ADDED from AndroidManifest.xml:12:13
+	android:name
+		ADDED from AndroidManifest.xml:11:13
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:14:13
+action#android.intent.action.MAIN
+ADDED from AndroidManifest.xml:15:17
+	android:name
+		ADDED from AndroidManifest.xml:15:25
+category#android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:16:17
+	android:name
+		ADDED from AndroidManifest.xml:16:27
+intent-filter#android.intent.action.VIEW+android.intent.category.BROWSABLE+android.intent.category.DEFAULT
+ADDED from AndroidManifest.xml:18:13
+	android:label
+		ADDED from AndroidManifest.xml:18:28
+action#android.intent.action.VIEW
+ADDED from AndroidManifest.xml:19:17
+	android:name
+		ADDED from AndroidManifest.xml:19:25
+category#android.intent.category.DEFAULT
+ADDED from AndroidManifest.xml:21:17
+	android:name
+		ADDED from AndroidManifest.xml:21:27
+category#android.intent.category.BROWSABLE
+ADDED from AndroidManifest.xml:22:17
+	android:name
+		ADDED from AndroidManifest.xml:22:27
+data
+ADDED from AndroidManifest.xml:24:17
+	android:host
+		ADDED from AndroidManifest.xml:25:21
+	android:scheme
+		ADDED from AndroidManifest.xml:27:21
+	android:pathPrefix
+		ADDED from AndroidManifest.xml:26:21
+provider#com.wibean.android.wibean.data.BrewingProgramContentProvider
+ADDED from AndroidManifest.xml:31:9
+	android:authorities
+		ADDED from AndroidManifest.xml:33:13
+	android:multiprocess
+		ADDED from AndroidManifest.xml:35:13
+	android:exported
+		ADDED from AndroidManifest.xml:34:13
+	android:name
+		ADDED from AndroidManifest.xml:32:13
+uses-permission#android.permission.INTERNET
+ADDED from AndroidManifest.xml:38:5
+	android:name
+		ADDED from AndroidManifest.xml:38:22
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from AndroidManifest.xml:41:5
+	android:name
+		ADDED from AndroidManifest.xml:41:22
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from AndroidManifest.xml:46:5
+	android:name
+		ADDED from AndroidManifest.xml:46:22
+uses-permission#android.permission.CHANGE_WIFI_MULTICAST_STATE
+ADDED from AndroidManifest.xml:47:5
+	android:name
+		ADDED from AndroidManifest.xml:47:22
+uses-permission#android.permission.CHANGE_WIFI_STATE
+ADDED from AndroidManifest.xml:48:5
+	android:name
+		ADDED from AndroidManifest.xml:48:22
+uses-sdk
+INJECTED from AndroidManifest.xml:0:0 reason: use-sdk injection requested
+MERGED from com.android.support:appcompat-v7:21.0.0:15:5
+MERGED from com.android.support:support-v4:21.0.2:15:5
+MERGED from com.google.android.gms:play-services:6.1.71:15:5
+MERGED from com.android.support:support-v4:21.0.2:15:5
+MERGED from com.android.support:support-v4:21.0.2:15:5
+	android:targetSdkVersion
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:minSdkVersion
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+meta-data#com.google.android.wearable.beta.app
+ADDED from AndroidManifest.xml:4:9
+	android:resource
+		ADDED from AndroidManifest.xml:5:20
+	android:name
+		ADDED from AndroidManifest.xml:4:20

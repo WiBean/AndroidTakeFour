@@ -46,10 +46,8 @@ public class TakeControlFragment extends Fragment implements View.OnClickListene
     private TakeControlFragmentListener mListener;
 
     private Button mConnectButton;
-    private Button mScanDeviceId;
-    private Button mScanAccessToken;
-    private EditText mDeviceId_editText;
-    private EditText mAccessToken_editText;
+    private Button mScanAccessCode;
+    private EditText mAccessCode_editText;
     private EditText mGoalTemperature_editText;
     private Spinner mTimeZoneSpinner;
 
@@ -91,18 +89,15 @@ public class TakeControlFragment extends Fragment implements View.OnClickListene
 
         // hookup convenience members
         mConnectButton = (Button) v.findViewById(R.id.btn_testCredentials);
-        mScanDeviceId = (Button) v.findViewById(R.id.btn_scanDeviceId);
-        mScanAccessToken = (Button) v.findViewById(R.id.btn_scanAccessToken);
-        mDeviceId_editText = (EditText) v.findViewById(R.id.et_deviceId);
-        mAccessToken_editText = (EditText) v.findViewById(R.id.et_accessToken);
+        mScanAccessCode = (Button) v.findViewById(R.id.btn_scanSingleCode);
+        mAccessCode_editText = (EditText) v.findViewById(R.id.et_accessCode);
         mGoalTemperature_editText = (EditText) v.findViewById(R.id.et_goalTemperature);
         mTimeZoneSpinner = (Spinner) v.findViewById(R.id.spn_dstOffset);
         // hookup the button here in the Fragment
         // (onClicks generated from buttons in Fragments get sent to their Activity
         // removing modularity)
         mConnectButton.setOnClickListener(this);
-        mScanDeviceId.setOnClickListener(this);
-        mScanAccessToken.setOnClickListener(this);
+        mScanAccessCode.setOnClickListener(this);
 
         // setup the timezone stuff
         // populate the TZ spinner
@@ -145,14 +140,14 @@ public class TakeControlFragment extends Fragment implements View.OnClickListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // if we have a value in the store, load it and then connect
-        String deviceId = "";
-        String accessToken = "";
+        String accessCode = "";
         String brewTemp = "";
         int utcSpinnerPos = 0;
         try {
             SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-            deviceId = prefs.getString(WiBeanSparkState.PREF_KEY_DEVICE_ID, "");
-            accessToken = prefs.getString(WiBeanSparkState.PREF_KEY_ACCESS_TOKEN, "");
+            //deviceId = prefs.getString(WiBeanSparkState.PREF_KEY_DEVICE_ID, "");
+            //accessToken = prefs.getString(WiBeanSparkState.PREF_KEY_ACCESS_TOKEN, "");
+            accessCode = prefs.getString(WiBeanSparkState.PREF_KEY_ACCESS_CODE,"");
             brewTemp = prefs.getString(WiBeanSparkState.PREF_KEY_BREW_TEMP, "");
             utcSpinnerPos = prefs.getInt(PREF_KEY_TIMEZONE_SPINNER_POSITION, 0);
         } catch (Exception e) {
@@ -160,21 +155,11 @@ public class TakeControlFragment extends Fragment implements View.OnClickListene
         }
         boolean testCredentials = false;
         boolean needCredential = false;
-        if (!deviceId.isEmpty()) {
+        if (!accessCode.isEmpty()) {
             // populate the dialog
             View v = getView();
-            EditText ipText = (EditText) v.findViewById(R.id.et_deviceId);
-            ipText.setText(deviceId);
-            // try auto connect if we aren't in control
-            testCredentials = true;
-        } else {
-            needCredential = true;
-        }
-        if (!accessToken.isEmpty()) {
-            // populate the dialog
-            View v = getView();
-            EditText ipText = (EditText) v.findViewById(R.id.et_accessToken);
-            ipText.setText(accessToken);
+            EditText ipText = (EditText) v.findViewById(R.id.et_accessCode);
+            ipText.setText(accessCode);
             // try auto connect if we aren't in control
             testCredentials = true;
         } else {
@@ -219,11 +204,8 @@ public class TakeControlFragment extends Fragment implements View.OnClickListene
             case R.id.btn_testCredentials:
                 btn_saveSettings(v);
                 break;
-            case R.id.btn_scanAccessToken:
-                onClick_pullAccessTokenFromBarcode(v);
-                break;
-            case R.id.btn_scanDeviceId:
-                onClick_pullDeviceIdFromBarcode(v);
+            case R.id.btn_scanSingleCode:
+                onClick_pullAccessCodeFromBarcode(v);
                 break;
             case R.id.btn_findTimezone:
                 takeDefaultTimeZone();
@@ -258,19 +240,13 @@ public class TakeControlFragment extends Fragment implements View.OnClickListene
         // assume whoever called this was finished with any network/pending operations
         enableInputs();
         mCredentialsValid = false;
-    }
+    };
 
-    public void onClick_pullAccessTokenFromBarcode(View v) {
-        mListener.setTargetControl(R.id.et_accessToken);
+    public void onClick_pullAccessCodeFromBarcode(View v) {
+        mListener.setTargetControl(R.id.et_accessCode);
         IntentIntegrator integrator = new IntentIntegrator(getActivity());
         integrator.initiateScan();
-    }
-
-    public void onClick_pullDeviceIdFromBarcode(View v) {
-        mListener.setTargetControl(R.id.et_deviceId);
-        IntentIntegrator integrator = new IntentIntegrator(getActivity());
-        integrator.initiateScan();
-    }
+    };
 
     public void btn_saveSettings(View v) {
         //toggle
@@ -279,22 +255,18 @@ public class TakeControlFragment extends Fragment implements View.OnClickListene
         //disableInputs();
 
         // use the current values to update the database
-        EditText etDeviceId = (EditText) getView().findViewById(R.id.et_deviceId);
-        String deviceId = etDeviceId.getText().toString();
-        EditText etAccessToken = (EditText) getView().findViewById(R.id.et_accessToken);
-        String accessToken = etAccessToken.getText().toString();
+        EditText etAccessCode = (EditText) getView().findViewById(R.id.et_accessCode);
+        String accessCode = etAccessCode.getText().toString();
 
         String currentTemp = mGoalTemperature_editText.getText().toString();
-        if (deviceId.isEmpty() || accessToken.isEmpty()) {
+        if (accessCode.isEmpty()) {
             mListener.alertUser(getString(R.string.alert_ip_error_title), getString(R.string.alert_ip_error_message));
             mCredentialsValid = false;
             return;
         }
         // else continue
         SharedPreferences.Editor prefsEdit = getActivity().getPreferences(Context.MODE_PRIVATE).edit();
-        prefsEdit.putString(WiBeanSparkState.PREF_KEY_DEVICE_ID, deviceId);
-        prefsEdit.putString(WiBeanSparkState.PREF_KEY_ACCESS_TOKEN, accessToken);
-        prefsEdit.putString(WiBeanSparkState.PREF_KEY_BREW_TEMP, currentTemp);
+        prefsEdit.putString(WiBeanSparkState.PREF_KEY_ACCESS_CODE, accessCode);
         prefsEdit.putInt(PREF_KEY_TIMEZONE_SPINNER_POSITION, mTimeZoneSpinner.getSelectedItemPosition());
         Integer utcOffset = getIntegerFromTimeZoneSpinner(mTimeZoneSpinner.getSelectedItemPosition());
         prefsEdit.putInt(WiBeanSparkState.PREF_KEY_DEVICE_TIMEZONE, utcOffset);
@@ -311,20 +283,16 @@ public class TakeControlFragment extends Fragment implements View.OnClickListene
 
     private void enableInputs() {
         mConnectButton.setEnabled(true);
-        mAccessToken_editText.setEnabled(true);
-        mScanAccessToken.setEnabled(true);
-        mScanDeviceId.setEnabled(true);
-        mDeviceId_editText.setEnabled(true);
+        mScanAccessCode.setEnabled(true);
+        mAccessCode_editText.setEnabled(true);
         mGoalTemperature_editText.setEnabled(true);
         mTimeZoneSpinner.setEnabled(true);
     }
 
     private void disableInputs() {
         mConnectButton.setEnabled(false);
-        mAccessToken_editText.setEnabled(false);
-        mScanAccessToken.setEnabled(false);
-        mScanDeviceId.setEnabled(false);
-        mDeviceId_editText.setEnabled(false);
+        mScanAccessCode.setEnabled(false);
+        mAccessCode_editText.setEnabled(false);
         mGoalTemperature_editText.setEnabled(false);
         mTimeZoneSpinner.setEnabled(false);
     }

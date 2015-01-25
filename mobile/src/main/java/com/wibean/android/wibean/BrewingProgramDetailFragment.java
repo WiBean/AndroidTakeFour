@@ -147,7 +147,7 @@ public class BrewingProgramDetailFragment extends Fragment implements
         View rootView = inflater.inflate(R.layout.fragment_brewingprogram_detail, container, false);
         if (mItem.getId().isEmpty()) {
             //we are creating a fresh one
-            ((Button) rootView.findViewById(R.id.btn_programDiscardChanges)).setText(R.string.action_createProgram);
+            ((Button) rootView.findViewById(R.id.btn_programDiscardChanges)).setVisibility(View.INVISIBLE);
         } else {
 
         }

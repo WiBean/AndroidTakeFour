@@ -19,17 +19,17 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tv_deviceId"
+                android:id="@+id/tv_singleCode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/btn_scanDeviceId"
+                android:layout_alignBottom="@+id/btn_scanSingleCode"
                 android:layout_alignParentStart="true"
                 android:labelFor="@+id/et_deviceId"
-                android:text="@string/label_device_id"
+                android:text="@string/label_single_code"
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btn_scanDeviceId"
+                android:id="@+id/btn_scanSingleCode"
                 style="@android:style/Widget.Holo.Light.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,42 +37,10 @@
                 android:text="Scan QR Code" />
 
             <EditText
-                android:id="@+id/et_deviceId"
+                android:id="@+id/et_accessCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tv_deviceId"
-                android:editable="false"
-                android:maxLength="128" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_accessToken"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/btn_scanAccessToken"
-                android:layout_alignParentStart="true"
-                android:labelFor="@+id/et_accessToken"
-                android:text="@string/label_accessToken"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_scanAccessToken"
-                style="@android:style/Widget.Holo.Light.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="Scan QR Code" />
-
-            <EditText
-                android:id="@+id/et_accessToken"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_accessToken"
+                android:layout_below="@id/tv_singleCode"
                 android:editable="false"
                 android:maxLength="128" />
         </RelativeLayout>

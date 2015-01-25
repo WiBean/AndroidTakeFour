@@ -18,15 +18,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by John-Michael on 11/9/2014.
  */
 public class SparkAuthenticator {
     private static final String URL_SPARK_BASE = "https://api.spark.io/";
-    private static final String URL_GENERATE_TOKEN = "oauth/token/";
-    private static final String URL_LIST_TOKENS = "v1/access_tokens/";
+    private static final String URL_GENERATE_TOKEN = "oauth/token";
+    private static final String URL_LIST_TOKENS = "v1/access_tokens";
     private static final String URL_LIST_DEVICES = "v1/devices/";
+    private static final String URL_ACCESS_TOKEN_PARAMETER_KEY = "access_token=";
     /*
     // ERROR CODES
     200 OK - API call successfully delivered to the Core and executed.
@@ -56,13 +58,21 @@ public class SparkAuthenticator {
     private static final String DEVICE_ID_FIELD = "id";
 
 
+    SparkAuthenticator() { setupTimeouts(); };
     SparkAuthenticator(String shortCode) {
-        setShortCode(shortCode);
+        setupTimeouts();
+        setAccessCode(shortCode);
     };
     SparkAuthenticator(String username, String password) {
+        setupTimeouts();
         setUsernameAndPassword(username,password);
     };
 
+    void setupTimeouts() {
+        mHttpClient.setConnectTimeout(8, TimeUnit.SECONDS);
+        mHttpClientWithBasic.setConnectTimeout(8, TimeUnit.SECONDS);
+        mHttpClientWithBasicForGeneration.setConnectTimeout(8, TimeUnit.SECONDS);
+    }
     // First, you need a username and password
     public boolean setUsernameAndPassword(String username, String password) {
         boolean success = true;
@@ -87,15 +97,18 @@ public class SparkAuthenticator {
         return true;
     }
     // Or a short code
-    public boolean setShortCode(String shortcode) {
+    public boolean setAccessCode(String shortcode) {
         if( !shortcode.contains("::") ) {
             return false;
         }
         mShortCode = shortcode;
         int sepIndex = mShortCode.lastIndexOf("::");
-        // TODO: DEBuG THIS
+        // if we don't possibly have enough characters for a password, bail
+        if( mShortCode.length() <= sepIndex+2 ) {
+            return false;
+        }
         String username = mShortCode.substring(0,sepIndex) + ".silvia@wibean.de";
-        String password = "JMF" + mShortCode.substring(sepIndex,mShortCode.length()) + "SF";
+        String password = "JMF" + mShortCode.substring(sepIndex+2,mShortCode.length()) + "SF";
         return setUsernameAndPassword(username, password);
     };
     private void updateRequestAuthenticator() {
@@ -131,15 +144,15 @@ public class SparkAuthenticator {
     private boolean getValidAccessToken() {
         if( mAccessToken.isEmpty() ) {
             if( hasUsefulCredentials() ) {
-                return false;
-            }
-            else {
                 if( !findExistingToken() ) {
                     return createNewToken();
                 }
                 else {
                     return true;
                 }
+            }
+            else {
+                return false;
             }
         }
         else {
@@ -171,7 +184,10 @@ public class SparkAuthenticator {
                         if( !obj.has(TOKEN_EXPIRES_AT_FIELD) ) {
                             continue;
                         }
-                        Date expiresAt = sDateFormat.parse(obj.getString(TOKEN_EXPIRES_AT_FIELD));
+                        // Because java can't parse ISO 8601 strings with a straight Z at the end indicating
+                        // UTC, we need to hack it.  As the spark server is the only tended target of this
+                        // library, and they ship times in UTC, I will do a static replace.
+                        Date expiresAt = sDateFormat.parse(obj.getString(TOKEN_EXPIRES_AT_FIELD).replace("Z","+00:00"));
                         long timeDiff = expiresAt.getTime() - nowAsTime;
                         if( timeDiff > longestDiff ) {
                             longestDiff = timeDiff;
@@ -185,6 +201,7 @@ public class SparkAuthenticator {
                     }
                     else {
                         // if no valid tokens, fail
+                        success = false;
                     }
                     break;
                 case 400:
@@ -223,9 +240,9 @@ public class SparkAuthenticator {
             builder.post(formBody);
             Request request = builder.build();
             Response response = mHttpClientWithBasicForGeneration.newCall(request).execute();
-            final JSONObject bodyAsObject = new JSONObject(response.body().string().trim().replace("\n", ""));
             switch( response.code() ) {
                 case 200:
+                    final JSONObject bodyAsObject = new JSONObject(response.body().string().trim().replace("\n", ""));
                     // pull off the token
                     if( !bodyAsObject.has(TOKEN_CREATED_TOKEN_FIELD) ) {
                         mAccessToken = bodyAsObject.getString(TOKEN_CREATED_TOKEN_FIELD);
@@ -266,12 +283,12 @@ public class SparkAuthenticator {
         try {
             StringBuilder targetURL = new StringBuilder();
             targetURL.append(URL_SPARK_BASE).append(URL_LIST_DEVICES);
-            targetURL.append("?").append(mAccessToken);
+            targetURL.append("?").append(URL_ACCESS_TOKEN_PARAMETER_KEY).append(mAccessToken);
             Request request =  new Request.Builder().url(targetURL.toString()).build();
             Response response = mHttpClient.newCall(request).execute();
-            final JSONArray bodyAsObject = new JSONArray(response.body().string().trim().replace("\n", ""));
             switch( response.code() ) {
                 case 200:
+                    final JSONArray bodyAsObject = new JSONArray(response.body().string().trim().replace("\n", ""));
                     // pull off the first device
                     for(int k=0;k<bodyAsObject.length();k++) {
                         final JSONObject obj = bodyAsObject.getJSONObject(k);
@@ -280,6 +297,7 @@ public class SparkAuthenticator {
                         }
                         mDeviceId = obj.getString(DEVICE_ID_FIELD);
                         success = true;
+                        break;
                     }
                     break;
                 case 401:

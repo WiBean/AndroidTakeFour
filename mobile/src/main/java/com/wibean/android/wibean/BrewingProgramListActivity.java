@@ -313,16 +313,14 @@ public class BrewingProgramListActivity extends Activity
 
     public boolean refreshPrefs() {
         SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-        String deviceId = prefs.getString(WiBeanSparkState.PREF_KEY_DEVICE_ID, "");
-        String accessToken = prefs.getString(WiBeanSparkState.PREF_KEY_ACCESS_TOKEN, "");
+        String accessCode = prefs.getString(WiBeanSparkState.PREF_KEY_ACCESS_CODE, "");
         mGoalTemperature = Float.valueOf(prefs.getString(WiBeanSparkState.PREF_KEY_BREW_TEMP, "92"));
         final int utcOffset = prefs.getInt(WiBeanSparkState.PREF_KEY_DEVICE_TIMEZONE, 0);
-        if (deviceId.isEmpty() || accessToken.isEmpty()) {
+        if (accessCode.isEmpty()) {
             return false;
         }
         boolean success = true;
-        success &= mWibean.setSparkDeviceId(deviceId);
-        success &= mWibean.setSparkAccessToken(accessToken);
+        success &= mWibean.setAccessCode(accessCode);
         success &= updateTimeZone(utcOffset);
         success &= mWibean.setTemperature(mGoalTemperature);
         return success;
@@ -831,6 +829,9 @@ public class BrewingProgramListActivity extends Activity
                 case WiBeanSparkState.RETURN_CODE_PUMP_CANCELLED:
                     Toast.makeText(BrewingProgramListActivity.this, mContext.getString(R.string.notify_brewCancelled), Toast.LENGTH_LONG).show();
                     break;
+                case WiBeanSparkState.RETURN_CODE_BAD_CREDENTIALS:
+                    Toast.makeText(BrewingProgramListActivity.this, mContext.getString(R.string.notify_brewingFailure_message_error), Toast.LENGTH_LONG).show();
+                    break;
             }
             // TODO: pre-emptive strike the status text, have a method which properly the status text no matter what
             makeNotBusy();
@@ -844,8 +845,7 @@ public class BrewingProgramListActivity extends Activity
                 makeBusy();
                 setUpdatingStatusText();
             }
-        }
-
+        };
         protected WiBeanSparkState.CONNECTION_STATE doInBackground(Void... voids) {
             if (mWibean.isSynchronized()) {
                 return mWibean.queryStatus();
@@ -854,19 +854,17 @@ public class BrewingProgramListActivity extends Activity
                 WiBeanSparkState.CONNECTION_STATE st = mWibean.queryStatus();
                 return st;
             }
-        }
-
+        };
         protected void onPostExecute(WiBeanSparkState.CONNECTION_STATE result) {
             try {
                 boolean tryAgain = true;
                 String newStatusBarText = new String("");
-                switch (mWibean.getConnectionState()) {
+                switch (result) {
                     case INVALID_CREDENTIALS:
                         // bad credentials
                         mCredentialsValid = false;
-                        alertUser("", "Credentials Invalid");
                         // update Control status text
-                        mStatusBarStateText.setText(R.string.label_control_status_bad);
+                        mStatusBarStateText.setText(R.string.label_control_status_bad_credentials);
                         tryAgain = false;
                         break;
                     case TIMEOUT:
@@ -966,8 +964,8 @@ public class BrewingProgramListActivity extends Activity
             } catch (Exception e) {
                 // if it fails, no worries
             }
-            // if we have nothing left to sync, be not busy!
-            if (mWibean.isSynchronized()) {
+            // if we have nothing left to sync/do, be not busy!
+            if (mWibean.isSynchronized() || !mCredentialsValid) {
                 makeNotBusy();
             }
         }

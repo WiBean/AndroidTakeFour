@@ -34,6 +34,7 @@
     <string name="label_control_status_brewing">Brewing!</string>
     <string name="label_control_status_heating">Heat On</string>
     <string name="label_control_status_connecting">Connecting...</string>
+    <string name="label_control_status_bad_credentials">Bad Access Code</string>
     <string name="label_program_unit_description">*All times given in units of 100ms</string>
 
     <string name="hint_example_program_name">Example Program Title</string>
@@ -61,11 +62,9 @@
     <string name="loading_message">Working, please wait...</string>
 
     <string name="label_goalTemperature">Goal Temp (°C):</string>
-    <string name="label_accessToken">Access Token</string>
-    <string name="label_device_id">Device ID</string>
     <string name="action_testCredentials">Save Settings</string>
     <string name="action_testCredentials_toast">Settings saved!</string>
-
+    <string name="label_single_code">Access Code</string>
     <string name="filter_title_viewBrewingProgram">WiBean Brewing Program</string>
     <string name="description_list_item_icon">List item icon</string>
 
@@ -104,6 +103,7 @@
     <string name="heading_control_status_updating">Updating</string>
     <string name="cancel">Cancel</string>
     <string name="word_seconds">seconds</string>
+
 
 
     <string-array name="simple_timezone_list">

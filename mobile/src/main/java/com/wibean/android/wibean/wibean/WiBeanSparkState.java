@@ -21,9 +21,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class WiBeanSparkState {
 
-
-    public static final String PREF_KEY_DEVICE_ID = "SPARK_DEVICE_ID";
-    public static final String PREF_KEY_ACCESS_TOKEN = "SPARK_ACCESS_TOKEN";
+    // single access code which can be used to generate the deviceID and accessToken
+    public static final String PREF_KEY_ACCESS_CODE = "WIBEAN_ACCESS_CODE";
     public static final String PREF_KEY_BREW_TEMP = "BREW_TEMP_IDEAL";
     public static final String PREF_KEY_DEVICE_TIMEZONE = "SPARK_TIME_ZONE";
     public static final String PREF_KEY_ALARM_TIME_HOUR = "ALARM_TIME_HOUR";
@@ -33,6 +32,7 @@ public class WiBeanSparkState {
     public static final int RETURN_CODE_PUMP_INVALID_PROGRAM = -1;
     public static final int RETURN_CODE_PUMP_BUSY = -2;
     public static final int RETURN_CODE_PUMP_CANCELLED = 2;
+    public static final int RETURN_CODE_BAD_CREDENTIALS = -3;
     public static final MediaType TEXT
             = MediaType.parse("application/json; charset=utf-8");
     // constants
@@ -54,10 +54,12 @@ public class WiBeanSparkState {
     private boolean mBrewing = false;
     private boolean mHasConnected = false;
     private CONNECTION_STATE mConnectionState = CONNECTION_STATE.DISCONNECTED;
-    private String mSparkDeviceId;
-    private String mSparkAccessToken;
-    private int mRequestTimeoutInSeconds;
+    private String mSparkDeviceId = "";
+    private String mSparkAccessToken = "";
+    private String mAccessCode = "";
+    private int mRequestTimeoutInSeconds = 10; //sane default, updated later
     private int mMachineTimeAsMinutesAfterMidnight = 0;
+    private SparkAuthenticator mAuthenticator = new SparkAuthenticator();
 
     public WiBeanSparkState() {
         setRequestTimeout(8);
@@ -78,30 +80,17 @@ public class WiBeanSparkState {
     public boolean setHeating(boolean heating) {
         this.mHeatingLocal = heating;
         return true;
-    }
+    };
 
     public boolean setTemperature(float desiredTemperature) {
         this.mDesiredTemperatureInCelsiusLocal = Math.min(Math.max(desiredTemperature, MIN_TEMP), MAX_TEMP);
         return true;
-    }
+    };
 
-    public String getSparkDeviceId() {
-        return this.mSparkDeviceId;
-    }
-
-    public boolean setSparkDeviceId(String mSparkDeviceId) {
-        this.mSparkDeviceId = mSparkDeviceId;
-        return true;
-    }
-
-    public String getSparkAccessToken() {
-        return this.mSparkAccessToken;
-    }
-
-    public boolean setSparkAccessToken(String mSparkAccessToken) {
-        this.mSparkAccessToken = mSparkAccessToken;
-        return true;
-    }
+    public boolean setAccessCode(String accessCode) {
+        this.mAccessCode = accessCode;
+        return mAuthenticator.setAccessCode(mAccessCode);
+    };
 
     public boolean setAlarm(WiBeanAlarmPackV1 alarm) {
         mAlarmLocal = new WiBeanAlarmPackV1(alarm);
@@ -112,7 +101,12 @@ public class WiBeanSparkState {
         return new WiBeanAlarmPackV1(this.mAlarmRemote);
     }
 
-    // actually send the request to set the heat temperature
+
+    /**
+     * Send the request to set the heat temperature
+     * NOTE: This should not be called unless mConnectionState is connected.
+     * @return
+     */
     private boolean sendTemperature() {
         if (mDesiredTemperatureInCelsiusLocal == mDesiredTemperatureInCelsiusRemote) {
             return true;
@@ -131,9 +125,14 @@ public class WiBeanSparkState {
             mDesiredTemperatureInCelsiusRemote = mDesiredTemperatureInCelsiusLocal;
         }
         return success;
-    }
+    };
 
-    // take control of the machine, so WiBean is in charge of heating
+
+    /**
+     * Take control of the machine, so WiBean is in charge of heating.
+     * NOTE: This should not be called unless mConnectionState is connected.
+     * @return
+     */
     private boolean makeHeat() {
         setTemperature(mDesiredTemperatureInCelsiusLocal);
         mHeatingLocal = true;
@@ -156,7 +155,11 @@ public class WiBeanSparkState {
         return success;
     }
 
-    // disable the heating circuit on the WiBean
+    /**
+     * Disable the heating circuit on the WiBean
+     * NOTE: This should not be called unless mConnectionState is connected.
+     * @return
+     */
     private boolean makeHibernate() {
         mHeatingLocal = false;
         if (mHeatingRemote == mHeatingLocal) {
@@ -178,7 +181,11 @@ public class WiBeanSparkState {
         return success;
     }
 
-    // update the alarm, and timezone on the remote device
+    /**
+     * Update the alarm, and timezone on the remote device.
+     * NOTE: This should not be called unless mConnectionState is connected.
+     * @return
+     */
     private boolean sendAlarm() {
         if (mAlarmLocal.equals(mAlarmRemote)) {
             return true;
@@ -234,6 +241,9 @@ public class WiBeanSparkState {
      */
     // reset control of the WiBean device so the machine acts as if we aren't even there.
     public int runBrewProgram(BrewingProgram theProgram) {
+        if( !populateAccessCredentials() ) {
+            return RETURN_CODE_BAD_CREDENTIALS;
+        }
         boolean success = false;
         Integer[] onTimes = theProgram.getOnTimes();
         Integer[] offTimes = theProgram.getOffTimes();
@@ -257,7 +267,7 @@ public class WiBeanSparkState {
         try {
             Response response = mHttpClient.newCall(request).execute();
             final JSONObject bodyAsObject = new JSONObject(response.body().string().trim().replace("\n", ""));
-            if ((response.code() == 200) &&
+            if ((response.code() == HttpStatus.SC_OK ) &&
                     bodyAsObject.has("return_value")) {
                 int returnCode = Integer.valueOf(bodyAsObject.getString("return_value"));
                 return returnCode;
@@ -269,9 +279,17 @@ public class WiBeanSparkState {
         return 1;
     }
 
-    // Query and update status
-    // reset control of the WiBean device so the machine acts as if we aren't even there.
+
+
+    /**
+     * Query and update status.
+     * Reset control of the WiBean device so the machine acts as if we aren't even there.
+     * @return
+     */
     public CONNECTION_STATE queryStatus() {
+        if( !populateAccessCredentials() ) {
+            return CONNECTION_STATE.INVALID_CREDENTIALS;
+        }
         String targetURL = assembleBaseUrl() + "status?" + "access_token=" + mSparkAccessToken;
         Request request = new Request.Builder().url(targetURL).build();
         try {
@@ -334,6 +352,11 @@ public class WiBeanSparkState {
         return (SPARK_BASE_URL + mSparkDeviceId + "/");
     }
 
+    /**
+     * Returns whether or not the state of the local simulated device matches that of the remote
+     * device.
+     * @return
+     */
     public boolean isSynchronized() {
         boolean syncd = true;
         syncd &= (mConnectionState == CONNECTION_STATE.CONNECTED);
@@ -343,10 +366,17 @@ public class WiBeanSparkState {
         return syncd;
     }
 
+    /**
+     * Does the actual work of sending all the relevant commands to bring the remote device
+     * into sync with the local device state desired by the user.
+     * @return
+     */
     public boolean synchronizeWithRemote() {
+        // if we aren't connected, try.
         if (mConnectionState != CONNECTION_STATE.CONNECTED) {
             queryStatus();
         }
+        // if we still aren't connected fail
         if (mConnectionState != CONNECTION_STATE.CONNECTED) {
             return false;
         }
@@ -364,6 +394,20 @@ public class WiBeanSparkState {
 
     public CONNECTION_STATE getConnectionState() {
         return mConnectionState;
+    }
+
+    /**
+     * Uses the authenticator to generate the deviceID and AccessToken needed to send all
+     * spark requests.
+     * @return
+     */
+    private boolean populateAccessCredentials() {
+        if( mAuthenticator.populateCredentials() ) {
+            mSparkDeviceId = mAuthenticator.getDeviceId();
+            mSparkAccessToken = mAuthenticator.getAccessToken();
+            return true;
+        }
+        return false;
     }
 
     /**

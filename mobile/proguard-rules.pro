@@ -15,3 +15,11 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# OKIO Issues are safe to ignore
+# https://github.com/square/okio/issues/60
+-dontwarn okio.**
+
+#Retrolambda causes some warnings safe to ignore
+# https://github.com/evant/gradle-retrolambda/issues/55
+-dontwarn java.lang.invoke**
