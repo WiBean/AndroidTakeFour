@@ -171,7 +171,7 @@ public class BrewingProgramListActivity extends Activity
         mIndefiniteProgressLow = (ProgressBar) findViewById(R.id.pb_indeterminateLow);
         mAlarmTimeText = (TextView) findViewById(R.id.tv_alarmSetFor);
         mMachineTimeText = (TextView) findViewById(R.id.tv_deviceTime);
-
+        /*
         if (findViewById(R.id.brewingprogram_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
@@ -184,7 +184,7 @@ public class BrewingProgramListActivity extends Activity
                     .findFragmentById(R.id.brewingprogram_list))
                     .setActivateOnItemClick(true);
         }
-
+        */
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         // Set up the drawer.

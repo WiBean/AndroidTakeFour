@@ -258,7 +258,7 @@ public class TakeControlFragment extends Fragment implements View.OnClickListene
         EditText etAccessCode = (EditText) getView().findViewById(R.id.et_accessCode);
         String accessCode = etAccessCode.getText().toString();
 
-        String currentTemp = mGoalTemperature_editText.getText().toString();
+        final String currentTemp = mGoalTemperature_editText.getText().toString();
         if (accessCode.isEmpty()) {
             mListener.alertUser(getString(R.string.alert_ip_error_title), getString(R.string.alert_ip_error_message));
             mCredentialsValid = false;
@@ -270,6 +270,7 @@ public class TakeControlFragment extends Fragment implements View.OnClickListene
         prefsEdit.putInt(PREF_KEY_TIMEZONE_SPINNER_POSITION, mTimeZoneSpinner.getSelectedItemPosition());
         Integer utcOffset = getIntegerFromTimeZoneSpinner(mTimeZoneSpinner.getSelectedItemPosition());
         prefsEdit.putInt(WiBeanSparkState.PREF_KEY_DEVICE_TIMEZONE, utcOffset);
+        prefsEdit.putString(WiBeanSparkState.PREF_KEY_BREW_TEMP, currentTemp);
         prefsEdit.commit();
         Toast.makeText(getActivity(), R.string.action_testCredentials_toast, Toast.LENGTH_SHORT);
         try {

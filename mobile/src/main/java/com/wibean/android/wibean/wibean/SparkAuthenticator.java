@@ -232,19 +232,23 @@ public class SparkAuthenticator {
             StringBuilder targetURL = new StringBuilder();
             targetURL.append(URL_SPARK_BASE).append(URL_GENERATE_TOKEN);
             Request.Builder builder = new Request.Builder().url(targetURL.toString());
-            RequestBody formBody = new FormEncodingBuilder()
+            // REQUIRED HERE to use x-www-form-urlencoded
+            final RequestBody formBody = new FormEncodingBuilder()
                     .add("grant_type", "password")
                     .add("username", mUsername)
                     .add("password", mPassword)
                     .build();
             builder.post(formBody);
+            final String credential = Credentials.basic("spark","spark");
+            builder.header("Authorization", credential);
             Request request = builder.build();
-            Response response = mHttpClientWithBasicForGeneration.newCall(request).execute();
+            //Response response = mHttpClientWithBasicForGeneration.newCall(request).execute();
+            Response response = mHttpClient.newCall(request).execute();
             switch( response.code() ) {
                 case 200:
                     final JSONObject bodyAsObject = new JSONObject(response.body().string().trim().replace("\n", ""));
                     // pull off the token
-                    if( !bodyAsObject.has(TOKEN_CREATED_TOKEN_FIELD) ) {
+                    if( bodyAsObject.has(TOKEN_CREATED_TOKEN_FIELD) ) {
                         mAccessToken = bodyAsObject.getString(TOKEN_CREATED_TOKEN_FIELD);
                         success = true;
                     }
@@ -261,7 +265,16 @@ public class SparkAuthenticator {
                     // TODO: throw a timeout?
                 case 500:
                     // TODO: indicate server failure?
-                    System.out.println("createNewToken: code: " + response.code());
+                    System.out.println("createNewToken failed: code: " + response.code());
+                    // try and get an error and description is available
+                    final JSONObject bodyAsObjectForError = new JSONObject(response.body().string().trim().replace("\n", ""));
+                    // pull off the token
+                    if( !bodyAsObjectForError.has("error") ) {
+                        System.out.println("error: " + bodyAsObjectForError.getString("error"));
+                    }
+                    if( !bodyAsObjectForError.has("description") ) {
+                        System.out.println("description: " + bodyAsObjectForError.getString("description"));
+                    }
                     break;
 
             }
@@ -305,7 +318,7 @@ public class SparkAuthenticator {
                     // generate new token if allowed
                     if( !fastFail ) {
                         createNewToken();
-                        fetchDeviceId(true);
+                        success = fetchDeviceId(true);
                     }
                     break;
                 case 400:
