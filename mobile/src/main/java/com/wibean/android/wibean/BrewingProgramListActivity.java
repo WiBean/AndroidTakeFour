@@ -351,6 +351,7 @@ public class BrewingProgramListActivity extends Activity
 
     public void toggleHeating() {
         mWibean.setHeating(!mWibean.isHeatingLocal());
+        mNotifyWhenHot = mWibean.isHeatingLocal();
         invalidateOptionsMenu();
         statusPollLoop();
     }
